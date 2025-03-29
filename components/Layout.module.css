@@ -43,11 +43,11 @@
     .container {
         flex-direction: column;
     }
-    
+
     .headerContent {
         padding-left: 0;
     }
-    
+
     .content {
         margin-left: 0;
     }
