@@ -1,0 +1,50 @@
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    height: 100%;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+}
+
+.sidebarInner {
+    padding: 2rem 1rem;
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar a {
+    display: block;
+    padding: 0.5rem;
+    border-radius: 3px;
+}
+
+.sidebar a:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+}
+
+.active a {
+    background-color: rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: relative;
+    }
+}
