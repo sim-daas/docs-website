@@ -41,7 +41,7 @@ export async function getStaticPaths() {
         fs.mkdirSync(docsDirectory, { recursive: true });
     }
 
-    let filenames = [];
+    let filenames: string[] = [];
     try {
         filenames = fs.readdirSync(docsDirectory);
     } catch (error) {
@@ -67,7 +67,7 @@ export async function getStaticProps({ params }: { params: { slug: string } }) {
     const docsDirectory = path.join(process.cwd(), 'docs');
 
     // Get all .md files for the sidebar
-    let filenames = [];
+    let filenames: string[] = [];
     try {
         filenames = fs.readdirSync(docsDirectory);
     } catch (error) {
