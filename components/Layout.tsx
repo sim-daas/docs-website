@@ -15,8 +15,8 @@ const Layout: React.FC<LayoutProps> = ({ children, documentsList }) => {
         <div className={styles.layout}>
             <header className={styles.header}>
                 <div className={styles.headerContent}>
-                    <h1 onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
-                        Documentation
+                    <h1 onClick={() => router.push('/')} style={{ cursor: 'pointer', textAlign: 'left' }}>
+                        scikit-learn documentation
                     </h1>
                 </div>
             </header>
