@@ -50,7 +50,7 @@ export async function getStaticProps() {
         fs.writeFileSync(path.join(docsDirectory, 'getting-started.md'), sampleContent);
     }
 
-    let filenames = [];
+    let filenames: string[] = [];
     try {
         filenames = fs.readdirSync(docsDirectory);
     } catch (error) {
