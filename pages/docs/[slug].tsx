@@ -11,9 +11,10 @@ interface DocPageProps {
     content: string;
     title: string;
     allDocs: string[];
+    isHtml: boolean;
 }
 
-export default function DocPage({ content, title, allDocs }: DocPageProps) {
+export default function DocPage({ content, title, allDocs, isHtml }: DocPageProps) {
     return (
         <>
             <Head>
@@ -22,12 +23,16 @@ export default function DocPage({ content, title, allDocs }: DocPageProps) {
             </Head>
 
             <article>
-                <ReactMarkdown
-                    remarkPlugins={[gfm]}
-                    rehypePlugins={[rehypeHighlight]}
-                >
-                    {content}
-                </ReactMarkdown>
+                {isHtml ? (
+                    <div dangerouslySetInnerHTML={{ __html: content }} />
+                ) : (
+                    <ReactMarkdown
+                        remarkPlugins={[gfm]}
+                        rehypePlugins={[rehypeHighlight]}
+                    >
+                        {content}
+                    </ReactMarkdown>
+                )}
             </article>
         </>
     );
@@ -48,11 +53,13 @@ export async function getStaticPaths() {
         console.error('Error reading docs directory:', error);
     }
 
-    const docFilenames = filenames.filter(filename => filename.endsWith('.md'));
+    const docFilenames = filenames.filter(filename =>
+        filename.endsWith('.md') || filename.endsWith('.html')
+    );
 
     const paths = docFilenames.map((filename) => ({
         params: {
-            slug: filename.replace(/\.md$/, ''),
+            slug: filename.replace(/\.(md|html)$/, ''),
         },
     }));
 
@@ -66,7 +73,7 @@ export async function getStaticProps({ params }: { params: { slug: string } }) {
     const { slug } = params;
     const docsDirectory = path.join(process.cwd(), 'docs');
 
-    // Get all .md files for the sidebar
+    // Get all .md and .html files for the sidebar
     let filenames: string[] = [];
     try {
         filenames = fs.readdirSync(docsDirectory);
@@ -74,28 +81,44 @@ export async function getStaticProps({ params }: { params: { slug: string } }) {
         console.error('Error reading docs directory:', error);
     }
 
-    const allDocs = filenames.filter(filename => filename.endsWith('.md'));
+    const allDocs = filenames.filter(filename =>
+        filename.endsWith('.md') || filename.endsWith('.html')
+    );
 
-    // Get the content of the requested document
-    const filePath = path.join(docsDirectory, `${slug}.md`);
+    // First try to find a markdown file
+    let filePath = path.join(docsDirectory, `${slug}.md`);
+    let isHtml = false;
 
-    // If the file doesn't exist, return a 404 page
+    // If markdown file doesn't exist, try HTML
     if (!fs.existsSync(filePath)) {
-        return {
-            notFound: true,
-        };
+        filePath = path.join(docsDirectory, `${slug}.html`);
+        isHtml = true;
+
+        // If neither exists, return 404
+        if (!fs.existsSync(filePath)) {
+            return {
+                notFound: true,
+            };
+        }
     }
 
     const fileContents = fs.readFileSync(filePath, 'utf8');
-    const { content, data } = matter(fileContents);
+    let content = fileContents;
+    let title = slug;
 
-    const title = data.title || slug;
+    // If it's a markdown file, process it with gray-matter
+    if (!isHtml) {
+        const { content: markdownContent, data } = matter(fileContents);
+        content = markdownContent;
+        title = data.title || slug;
+    }
 
     return {
         props: {
             content,
             title,
             allDocs,
+            isHtml
         },
         // Revalidate every 10 seconds
         revalidate: 10,

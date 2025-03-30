@@ -22,7 +22,7 @@ export default function Home({ allDocs }: { allDocs: string[] }) {
                     <h2>Available Documents:</h2>
                     <ul>
                         {allDocs.map((doc) => {
-                            const docName = doc.replace(/\.md$/, '');
+                            const docName = doc.replace(/\.(md|html)$/, '');
                             return (
                                 <li key={docName}>
                                     <Link href={`/docs/${docName}`}>{docName}</Link>
@@ -37,7 +37,7 @@ export default function Home({ allDocs }: { allDocs: string[] }) {
 }
 
 export async function getStaticProps() {
-    // Get all .md files from the docs directory
+    // Get all .md and .html files from the docs directory
     const docsDirectory = path.join(process.cwd(), 'docs');
 
     // Create docs directory if it doesn't exist
@@ -57,7 +57,7 @@ export async function getStaticProps() {
         console.error('Error reading docs directory:', error);
     }
 
-    const allDocs = filenames.filter(filename => filename.endsWith('.md'));
+    const allDocs = filenames.filter(filename => filename.endsWith('.md') || filename.endsWith('.html'));
 
     return {
         props: {

@@ -20,8 +20,8 @@ const Sidebar: React.FC<SidebarProps> = ({ documentsList }) => {
                         <Link href="/">Home</Link>
                     </li>
                     {documentsList.map((doc) => {
-                        // Remove .md extension for display
-                        const docName = doc.replace(/\.md$/, '');
+                        // Remove .md or .html extension for display
+                        const docName = doc.replace(/\.(md|html)$/, '');
                         return (
                             <li
                                 key={docName}
